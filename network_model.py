@@ -30,34 +30,35 @@ class Network_Model:
         # END TESTING
         
     def run(self, nsteps):
-        v1_rns = self.n*np.random.uniform(size=nsteps).astype(int)
-        v2_rns = self.n*np.random.uniform(size=nsteps).astype(int)
+        v1_rns = (self.n*np.random.uniform(size=nsteps)).astype(int)
+        v2_rns = (self.n*np.random.uniform(size=nsteps)).astype(int)
         edgeremoval_rns = np.random.uniform(size=nsteps)
         for i in range(nsteps):
             self.step(v1_rns[i], v2_rns[i], edgeremoval_rns[i])
 
     def step(self, v1, v2, edgeremoval_rn):
-        if self.A[v1][v2] == 0 and v1 != v2:
-            self.A[v1][v2] = 1
-            self.A[v2][v1] = 1
-            self.degs[v1] = self.degs[v1] + 1
-            self.degs[v2] = self.degs[v2] + 1
+        if v1 != v2:
+            if self.A[v1][v2] == 0:
+                self.A[v1][v2] = 1
+                self.A[v2][v1] = 1
+                self.degs[v1] = self.degs[v1] + 1
+                self.degs[v2] = self.degs[v2] + 1
 
-        if edgeremoval_rn < self.r:
-            removed_deg = int(np.sum(self.degs)*np.random.uniform())
-            degcount = 0
-            i = 0
-            while(degcount < removed_deg):
-                degcount = degcount + self.degs[i]
-                i = i + 1
-            i = i - 1
-            degcount = degcount - self.degs[i]
-            j = 0
-            while(degcount < removed_deg):
-                degcount = degcount + self.A[i][j]
-                j = j + 1
-            j = j - 1
-            self.A[i][j] = 0
-            self.A[j][i] = 0
-            self.degs[i] = self.degs[i] - 1
-            self.degs[j] = self.degs[j] - 1
+            if edgeremoval_rn < self.r:
+                removed_deg = int(np.sum(self.degs)*np.random.uniform())
+                degcount = 0
+                i = 0
+                while degcount < removed_deg:
+                    degcount = degcount + self.degs[i]
+                    i = i + 1
+                i = i - 1
+                degcount = degcount - self.degs[i]
+                j = 0
+                while degcount < removed_deg:
+                    degcount = degcount + self.A[i][j]
+                    j = j + 1
+                j = j - 1
+                self.A[i][j] = 0
+                self.A[j][i] = 0
+                self.degs[i] = self.degs[i] - 1
+                self.degs[j] = self.degs[j] - 1

@@ -21,13 +21,14 @@ class Network_Ensemble:
         for network in self.ensemble:
             network.run(nsteps)
         
-    def get_avg_deg_dist(self):
+    def get_avg_deg_dist(self, bins=None):
         ensemble_degs = np.zeros((self.nnetworks, self.n))
         for i in range(self.nnetworks):
             ensemble_degs[i, :] = np.copy(self.ensemble[i].degs)
         maxdeg = np.amax(ensemble_degs)
         mindeg = np.amin(ensemble_degs)
-        print maxdeg, mindeg
-        return np.histogram(ensemble_degs, bins=maxdeg-mindeg+1, range=(mindeg, maxdeg), density=True)[0]
+        if bins is None:
+            bins = maxdeg-mindeg+1
+        return np.histogram(ensemble_degs, bins=bins, range=(mindeg, maxdeg), density=True)
         
         
