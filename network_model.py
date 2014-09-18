@@ -25,10 +25,68 @@ class Network_Model:
                 self.degs[v] = self.degs[v] + 1
                 self.degs[w] = self.degs[w] + 1
 
-        # BEGIN TESTING
-        print 'initialization disparity:', np.sum(self.degs)/(self.n*(self.n-1)) - self.p
-        # END TESTING
+        # # BEGIN TESTING
+        # print 'initialization disparity:', np.sum(self.degs)/(self.n*(self.n-1)) - self.p
+        # # END TESTING
         
+    def init_graph_havelhakimi(self, deg_sequence):
+        # assumes reverse-sorted deg sequence as input, DOES NOT SORT WITHIN FUNCTION
+        for i in range(self.n):
+            current_deg = deg_sequence[i]
+            for j in range(i + 1, current_deg + i + 1):
+                self.A[i][j] = 1
+                self.A[j][i] = 1
+                self.degs[i] = self.degs[i] + 1
+                self.degs[j] = self.degs[j] + 1
+                deg_sequence[i] = deg_sequence[i] - 1
+                deg_sequence[j] = deg_sequence[j] - 1
+        if sum(deg_sequence == 0) == self.n:
+            return True
+        else:
+            return False
+            
+    @staticmethod
+    def init_graph_havelhakimi_test(deg_sequence):
+        # assumes reverse-sorted deg sequence as input, DOES NOT SORT WITHIN FUNCTION
+        # adjusted_deg_sequence = np.copy(deg_sequence)
+        n = deg_sequence.shape[0]
+        THRESHOLD = 0
+        ncut_degs = 0
+        for i in range(n):
+            current_deg = deg_sequence[i]
+            # while current_deg + i > n - 1:
+            if current_deg + i > n - 1:
+                return False
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                # if the difference is less than the threshold, decrease
+                # degree to make graphical
+                # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                # this needs fixing, as we were previously returning some sort of strange
+                # zeroed deg_sequence which somehow still gave somewhat reasonable results
+                # if we want to use this approach, need to make copy of sequence and adjust
+                # appropriately, then return the adjusted copy
+                # for the time being, simply test graphical/not graphical
+                # if current_deg + i - THRESHOLD > n - 1:
+                #     # print i, current_deg + i - (n - 1)
+                #     return [False]
+                # else:
+                #     ncut_degs += current_deg - (n-1-i)
+                #     deg_sequence[i] = n-1-i
+                #     adjusted_deg_sequence[i] = n-1-i
+                #     deg_sequence[i:] = np.sort(deg_sequence[i:])
+                #     adjusted_deg_sequence[i:] = np.sort(adjusted_deg_sequence[i:])
+                #     current_deg = deg_sequence[i]
+            for j in range(i + 1, current_deg + i + 1):
+                deg_sequence[i] = deg_sequence[i] - 1
+                deg_sequence[j] = deg_sequence[j] - 1
+        if sum(deg_sequence == 0) == n:
+            # print 'havelhakimi cut', ncut_degs, 'degs for a total of', np.sum(deg_sequence)/2, 'edges'
+            return True #, deg_sequence]
+        else:
+            print 'havelhakimi deg sum discrepancy:', sum(deg_sequence == 0) - n
+            return False
+        
+
     def run(self, nsteps):
         v1_rns = (self.n*np.random.uniform(size=nsteps)).astype(int)
         v2_rns = (self.n*np.random.uniform(size=nsteps)).astype(int)
@@ -62,3 +120,5 @@ class Network_Model:
                 self.A[j][i] = 0
                 self.degs[i] = self.degs[i] - 1
                 self.degs[j] = self.degs[j] - 1
+    
+        
