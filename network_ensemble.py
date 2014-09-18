@@ -125,5 +125,5 @@ class Network_Ensemble:
             # print attempt_count # np.sort(new_degs)[::-1].astype(int)
             attempt_count += 1
         print 'attempt count:', attempt_count, 'with a total of', np.sum(new_degs)/2, 'new edges'
-        return new_degs
+        return np.sort(new_degs)[::-1].astype(int)
         # return new_degs_test[1]
