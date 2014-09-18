@@ -76,7 +76,6 @@ class Network_Ensemble:
         return (cdf_current - (cdf2 - m*deg2))/m
         
     def project(self, deg_cdf_markers, times, proj_interval):
-        import matplotlib.pyplot as plt
         ncdfs = deg_cdf_markers.shape[0]
         nbins = deg_cdf_markers.shape[1]
         A = np.ones((ncdfs, 2))
