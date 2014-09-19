@@ -41,10 +41,10 @@ def main(nnetworks=20, nsteps=20000, n=100, p=0.5, r=0.9, project=True, proj_int
     for key in files.keys():
         files[key].write('filekey=' + key + '\n')
 
-    coarse_vars = np.empty((nmicro_intervals, nbins))
     start = time.clock()
 
     if project:
+        coarse_vars = np.empty((nmicro_intervals, nbins))
         nmicrosteps = 1000
         micro_interval = 200
         nmicro_intervals = int(nmicrosteps/micro_interval)
