@@ -23,17 +23,11 @@ def completion_bar(current, total, elapsed_time=None):
     print bar,
     sys.stdout.flush()
 
-def main(nnetworks=20, nsteps=20000, n=100, p=0.5, r=0.9, project=True):
+def main(nnetworks=20, nsteps=20000, n=100, p=0.5, r=0.9, project=True, proj_interval=1000, nintervals=50):
 
     ensemble = ne.Network_Ensemble(nnetworks, n, p, r)
     ensemble.init_ensemble()
     
-    proj_interval = 1000
-    nmicrosteps = 1000
-    micro_interval = 200
-    nmicro_intervals = int(nmicrosteps/micro_interval)
-    nintervals = int(nsteps/(nmicrosteps + proj_interval))
-    interval = nmicrosteps + proj_interval
     nbins = 50
     folder = None
     if project:
@@ -46,9 +40,16 @@ def main(nnetworks=20, nsteps=20000, n=100, p=0.5, r=0.9, project=True):
     files['times'] = open(folder + 'times.csv', 'w')
     for key in files.keys():
         files[key].write('filekey=' + key + '\n')
+
     coarse_vars = np.empty((nmicro_intervals, nbins))
     start = time.clock()
+
     if project:
+        nmicrosteps = 1000
+        micro_interval = 200
+        nmicro_intervals = int(nmicrosteps/micro_interval)
+        nintervals = int(nsteps/(nmicrosteps + proj_interval))
+        interval = nmicrosteps + proj_interval
         times = np.empty(nmicro_intervals)
         print '-----------------------------------------'
         print '************** cpi enabled **************'
@@ -83,7 +84,6 @@ def main(nnetworks=20, nsteps=20000, n=100, p=0.5, r=0.9, project=True):
 
     else:
         # save 100 avg deg cdfs
-        nintervals = 50
         interval = int(nsteps/nintervals)
         print '------------------------------------------'
         print '************** cpi disabled **************'
@@ -116,9 +116,11 @@ if __name__=='__main__':
     parser.add_argument('--nnetworks', type=int, default=20)
     parser.add_argument('--p', type=float, default=0.5)
     parser.add_argument('--r', type=float, default=0.9)
+    parser.add_argument('--nintervals', type=int, default=50)
+    parser.add_argument('--projectstep', type=int, default=1000)
     parser.add_argument('--nsteps', type=int, default=20000)
     parser.add_argument('--noproject', action='store_true', default=False)
     # not useful, but comforting
     parser.add_argument('--project', action='store_true', default=True)
     args = parser.parse_args()
-    main(args.nnetworks, args.nsteps, args.n, args.p, args.r, not args.noproject)
+    main(args.nnetworks, args.nsteps, args.n, args.p, args.r, project=not args.noproject, proj_interval=args.projectstep, nintervals=args.nintervals)
