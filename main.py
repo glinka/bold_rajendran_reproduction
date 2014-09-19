@@ -44,12 +44,12 @@ def main(nnetworks=20, nsteps=20000, n=100, p=0.5, r=0.9, project=True, proj_int
     start = time.clock()
 
     if project:
-        coarse_vars = np.empty((nmicro_intervals, nbins))
         nmicrosteps = 1000
         micro_interval = 200
         nmicro_intervals = int(nmicrosteps/micro_interval)
         nintervals = int(nsteps/(nmicrosteps + proj_interval))
         interval = nmicrosteps + proj_interval
+        coarse_vars = np.empty((nmicro_intervals, nbins))
         times = np.empty(nmicro_intervals)
         print '-----------------------------------------'
         print '************** cpi enabled **************'
