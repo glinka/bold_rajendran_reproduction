@@ -31,17 +31,23 @@ class Network_Model:
         
     def init_graph_havelhakimi(self, deg_sequence):
         # assumes reverse-sorted deg sequence as input, DOES NOT SORT WITHIN FUNCTION
+        if np.sum(deg_sequence) % 2 == 1:
+            deg_sequence[0] += 1
         self.A = np.zeros((self.n,self.n))
         self.degs = np.zeros(self.n)
         for i in range(self.n):
             current_deg = deg_sequence[i]
-            for j in range(i + 1, current_deg + i + 1):
-                self.A[i][j] = 1
-                self.A[j][i] = 1
-                self.degs[i] = self.degs[i] + 1
-                self.degs[j] = self.degs[j] + 1
-                deg_sequence[i] = deg_sequence[i] - 1
-                deg_sequence[j] = deg_sequence[j] - 1
+            j = i+1
+            while current_deg > 0 and j < self.n:
+                if deg_sequence[j] > 0:
+                    self.A[i][j] = 1
+                    self.A[j][i] = 1
+                    self.degs[i] = self.degs[i] + 1
+                    self.degs[j] = self.degs[j] + 1
+                    deg_sequence[j] -= 1
+                    current_deg -= 1
+                j += 1
+            deg_sequence[i] = 0
         if sum(deg_sequence == 0) == self.n:
             return True
         else:
